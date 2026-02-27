@@ -1,3 +1,4 @@
+using Mundialito.Domain.Events;
 using Mundialito.Domain.SeedWork;
 
 namespace Mundialito.Domain.Results;
@@ -8,7 +9,7 @@ namespace Mundialito.Domain.Results;
 /// </summary>
 /// <remarks>
 /// Invariantes:
-/// - <see cref="HomeGoals"/> y <see cref="AwayGoals"/> deben ser &gt;= 0.
+/// - <see cref="HomeGoals"/> y <see cref="AwayGoals"/> deben ser >= 0.
 /// - La consistencia entre este marcador y la suma de goles por jugador
 ///   se valida en el Command Handler de Application.
 /// </remarks>
@@ -58,4 +59,14 @@ public sealed class MatchResult : Entity
 
         return Result<MatchResult>.Ok(result);
     }
+
+    // ─── Domain Event ─────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Registra el evento <see cref="MatchResultRecordedEvent"/> en la entidad.
+    /// Lo llama el Command Handler de Application tras validar el resultado.
+    /// Infrastructure lo despachará tras commitear el UoW.
+    /// </summary>
+    public void RegisterResultRecordedEvent(Guid matchId, int homeGoals, int awayGoals) =>
+        AddDomainEvent(new MatchResultRecordedEvent(matchId, homeGoals, awayGoals));
 }
