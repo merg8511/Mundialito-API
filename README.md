@@ -119,6 +119,65 @@ dotnet test Mundialito.sln
 
 ---
 
+## Supuestos del Torneo
+
+### Formato
+- **Round-robin**: cada equipo juega contra los demás una vez.
+- **Puntuación**: Victoria = **3 pts** · Empate = **1 pt** · Derrota = **0 pts**.
+- **Desempate** (en ese orden): `points` desc → `goalDifference` desc → `goalsFor` desc.
+
+### Estados de un partido
+| Estado | Descripción |
+|--------|-------------|
+| `Scheduled` | Partido programado, sin resultado. `homeGoals`/`awayGoals` son **null** en la respuesta. |
+| `Played`    | Resultado registrado. No puede cambiar de estado de vuelta a Scheduled. |
+
+### Tabla de posiciones (standings)
+Calculada en tiempo real por Dapper desde las tablas `MatchResults` y `Matches`.
+No existe tabla desnormalizada; los puntos se derivan de los resultados.
+
+---
+
+## Invariantes de Dominio (validadas en Application)
+
+> Las invariantes del **dominio puro** están en las entities.
+> Las que requieren consulta a la BD se validan en los **Command Handlers**.
+
+### Team
+| Invariante | Error Code |
+|------------|-----------|
+| Nombre no nulo/vacío | `VALIDATION_ERROR` |
+| Nombre único en el sistema | `TEAM_NAME_CONFLICT` |
+| No se puede eliminar si tiene Players o Matches | `TEAM_HAS_DEPENDENCIES` |
+
+### Player
+| Invariante | Error Code |
+|------------|-----------|
+| FullName no nulo/vacío | `VALIDATION_ERROR` |
+| Number > 0 (si se proporciona) | `VALIDATION_ERROR` |
+| TeamId debe existir | `TEAM_NOT_FOUND` |
+
+### Match
+| Invariante | Error Code |
+|------------|-----------|
+| HomeTeamId ≠ AwayTeamId | `VALIDATION_ERROR` |
+| Ambos equipos deben existir | `TEAM_NOT_FOUND` |
+| No se puede crear si ya existe el mismo enfrentamiento pendiente | `RESOURCE_CONFLICT` |
+| Solo puede registrarse resultado si status = `Scheduled` | `MATCH_ALREADY_PLAYED` |
+
+### MatchResult / MatchGoals
+| Invariante | Error Code |
+|------------|-----------|
+| Match debe existir | `MATCH_NOT_FOUND` |
+| Match aún en estado Scheduled | `MATCH_ALREADY_PLAYED` |
+| Cada PlayerId debe existir | `PLAYER_NOT_FOUND` |
+| PlayerId debe pertenecer a homeTeam o awayTeam del match | `PLAYER_NOT_IN_MATCH` |
+| Suma de goles de jugadores home == homeGoals **y** suma away == awayGoals | `MATCH_RESULT_INCONSISTENT` |
+| HomeGoals ≥ 0 y AwayGoals ≥ 0 | `VALIDATION_ERROR` |
+| Goals por jugador > 0 | `VALIDATION_ERROR` |
+
+---
+
 ## Catálogo de Error Codes
 
 | Código HTTP | errorCode |
