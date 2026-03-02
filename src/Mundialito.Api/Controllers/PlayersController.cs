@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Mundialito.Api.Filters;
 using Mundialito.Api.Mapping;
 using Mundialito.Application.Abstractions.QueryServices;
 using Mundialito.Application.Common;
@@ -39,6 +40,7 @@ public sealed class PlayersController : ControllerBase
 
     // ── POST /teams/{teamId}/players ──────────────────────────────────────────
     [HttpPost("teams/{teamId:guid}/players")]
+    [IdempotencyFilter]
     public async Task<IActionResult> CreatePlayer(
         Guid teamId,
         [FromBody] CreatePlayerRequest request,

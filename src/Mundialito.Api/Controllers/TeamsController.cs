@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Mundialito.Api.Filters;
 using Mundialito.Api.Mapping;
 using Mundialito.Application.Abstractions.QueryServices;
 using Mundialito.Application.Common;
@@ -39,6 +40,7 @@ public sealed class TeamsController : ControllerBase
 
     // ── POST /teams ───────────────────────────────────────────────────────────
     [HttpPost]
+    [IdempotencyFilter]
     public async Task<IActionResult> CreateTeam(
         [FromBody] CreateTeamRequest request,
         CancellationToken ct)

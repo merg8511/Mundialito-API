@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Mundialito.Api.Filters;
 using Mundialito.Api.Mapping;
 using Mundialito.Application.Abstractions.QueryServices;
 using Mundialito.Application.Common;
@@ -38,6 +39,7 @@ public sealed class MatchesController : ControllerBase
 
     // ── POST /matches ─────────────────────────────────────────────────────────
     [HttpPost]
+    [IdempotencyFilter]
     public async Task<IActionResult> CreateMatch(
         [FromBody] CreateMatchRequest request,
         CancellationToken ct)
@@ -85,6 +87,7 @@ public sealed class MatchesController : ControllerBase
 
     // ── POST /matches/{id}/results ────────────────────────────────────────────
     [HttpPost("{id:guid}/results")]
+    [IdempotencyFilter]
     public async Task<IActionResult> RecordResult(
         Guid id,
         [FromBody] RecordMatchResultRequest request,

@@ -196,3 +196,107 @@ No existe tabla desnormalizada; los puntos se derivan de los resultados.
 | 409 | `IDEMPOTENCY_KEY_CONFLICT` |
 | 409 | `RESOURCE_CONFLICT` |
 | 500 | `INTERNAL_ERROR` |
+
+---
+
+## Sprint 6 — Idempotencia: Cómo verificar
+
+La idempotencia está implementada como un **Action Filter** (`IdempotencyFilterAttribute`) aplicado **solo** a los 4 endpoints POST:
+- `POST /teams`
+- `POST /teams/{teamId}/players`
+- `POST /matches`
+- `POST /matches/{id}/results`
+
+### Caso 1: Falta el header `Idempotency-Key` → 400
+
+```bash
+curl -s -X POST http://localhost:5000/teams \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Team Alpha"}' | jq .
+```
+
+**Respuesta esperada (400):**
+```json
+{
+  "errorCode": "IDEMPOTENCY_KEY_REQUIRED",
+  "message": "The 'Idempotency-Key' header is required for this endpoint.",
+  "traceId": "<trace-id>"
+}
+```
+
+---
+
+### Caso 2: Mismo key + mismo payload → REPLAY EXACTO (201, mismo body)
+
+**Primera llamada (crea el equipo):**
+```bash
+curl -s -X POST http://localhost:5000/teams \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: unique-key-001" \
+  -d '{"name":"Team Alpha"}' | jq .
+```
+
+**Segunda llamada (mismo key, mismo payload):**
+```bash
+curl -s -X POST http://localhost:5000/teams \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: unique-key-001" \
+  -d '{"name":"Team Alpha"}' | jq .
+```
+
+**Respuesta esperada (ambas son idénticas — status 201 + mismo body):**
+```json
+{
+  "id": "...",
+  "name": "Team Alpha",
+  "createdAt": "..."
+}
+```
+El equipo NO se crea dos veces en la BD. El segundo request devuelve exactamente el mismo status code y body almacenados.
+
+---
+
+### Caso 3: Mismo key + payload distinto → 409 IDEMPOTENCY_KEY_CONFLICT
+
+```bash
+curl -s -X POST http://localhost:5000/teams \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: unique-key-001" \
+  -d '{"name":"Team DIFERENTE"}' | jq .
+```
+
+**Respuesta esperada (409):**
+```json
+{
+  "errorCode": "IDEMPOTENCY_KEY_CONFLICT",
+  "message": "An idempotency key conflict was detected: the same key was used with a different request payload.",
+  "traceId": "<trace-id>"
+}
+```
+
+---
+
+### Caso 4: Verificar registro en la BD (opcional)
+
+```bash
+# Conectarse al SQL Server y consultar la tabla IdempotencyKeys
+SELECT IdempotencyKey, RequestHash, ResponseStatusCode, CreatedAt
+FROM   IdempotencyKeys
+ORDER  BY CreatedAt DESC;
+```
+
+---
+
+### Nota sobre concurrencia (Race Condition)
+
+Si dos requests llegan **simultáneamente** con la misma key y el mismo payload:
+
+1. El primer request inserta el registro → éxito, responde normalmente.
+2. El segundo request falla el INSERT (unique constraint violation en `IX_IdempotencyKeys_IdempotencyKey`).
+3. El filtro captura el error de constraint, hace un **re-lookup con Dapper**:
+   - Si el hash coincide → el response ya fue enviado (idéntico al del primer request).
+   - Si el hash difiere → se logea un warning (el cliente ya recibió el response, situación de conflicto en race).
+4. **El error SQL NUNCA se expone al cliente.**
+
+El unique index en la columna `IdempotencyKey` garantiza que este manejo es correcto y seguro.
+

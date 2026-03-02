@@ -5,6 +5,7 @@ using Mundialito.Application.Abstractions;
 using Mundialito.Application.Abstractions.QueryServices;
 using Mundialito.Application.Abstractions.Repositories;
 using Mundialito.Infrastructure.Dapper;
+using Mundialito.Infrastructure.Idempotency;
 using Mundialito.Infrastructure.Persistence;
 using Mundialito.Infrastructure.Persistence.Repositories;
 
@@ -52,6 +53,17 @@ public static class DependencyInjection
         services.AddScoped<IMatchesQueryService, MatchesQueryService>();
         services.AddScoped<IStandingsQueryService, StandingsQueryService>();
         services.AddScoped<IScorersQueryService, ScorersQueryService>();
+
+        // ── Sprint 6: Idempotencia ────────────────────────────────────────────
+        // Read side (Dapper) — lookup de idempotency key
+        services.AddScoped<IIdempotencyQueryService, IdempotencyQueryService>();
+
+        // Write side (EF Core) — persistencia del registro idempotente
+        services.AddScoped<IIdempotencyRepository, IdempotencyRepository>();
+
+        // UoW dedicado para idempotency — el único que llama SaveChangesAsync
+        // para IdempotencyKeys (separado del UoW de dominio).
+        services.AddScoped<IIdempotencyUnitOfWork, IdempotencyUnitOfWork>();
 
         return services;
     }
