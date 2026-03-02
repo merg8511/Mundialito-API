@@ -1,19 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.12" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.12" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Mundialito.Application\Mundialito.Application.csproj" />
-    <ProjectReference Include="..\Mundialito.Infrastructure\Mundialito.Infrastructure.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Mundialito.Application\Mundialito.Application.csproj" />
+		<ProjectReference Include="..\Mundialito.Infrastructure\Mundialito.Infrastructure.csproj" />
+	</ItemGroup>
 
 </Project>

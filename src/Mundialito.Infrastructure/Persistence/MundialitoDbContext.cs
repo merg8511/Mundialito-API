@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Mundialito.Domain.Events;
 using Mundialito.Domain.Matches;
 using Mundialito.Domain.Players;
 using Mundialito.Domain.Results;
+using Mundialito.Domain.SeedWork;
 using Mundialito.Domain.Teams;
 
 namespace Mundialito.Infrastructure.Persistence;
@@ -29,6 +31,10 @@ public sealed class MundialitoDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Ignore<DomainEvent>(); // Ignora la clase base de eventos de dominio
+        modelBuilder.Ignore<TeamCreatedEvent>();
+        modelBuilder.Ignore<MatchResultRecordedEvent>();
+
         base.OnModelCreating(modelBuilder);
 
         // ── Teams ────────────────────────────────────────────────────────────

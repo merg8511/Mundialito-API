@@ -1,0 +1,47 @@
+services:
+
+  # ── SQL Server 2022 ─────────────────────────────────────────────────────────
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mundialito_sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Prueb4!Tecnica20226"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      # sqlcmd is available at different paths on different SQL Server images;
+      # use a simple TCP-level check via the MSSQL tools if available,
+      # otherwise fall back to a bash/sh TCP ping.
+      test:
+        - "CMD-SHELL"
+        - |
+          /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "Prueb4!Tecnica20226" -C -Q "SELECT 1" ||
+          /opt/mssql-tools/bin/sqlcmd  -S localhost -U sa -P "Prueb4!Tecnica20226"    -Q "SELECT 1"
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
+
+  # ── API ─────────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mundialito_api
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "http://+:8080"
+      # Override the connection string to target the sqlserver container
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=MundialitoDb;User Id=sa;Password=Prueb4!Tecnica20226;TrustServerCertificate=True;Encrypt=False;"
+    ports:
+      - "8080:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+volumes:
+  sqlserver_data:

@@ -348,3 +348,74 @@ curl -s -X POST http://localhost:5000/teams \
 # 2. Para filtrar solo los eventos en los logs (Linux/Mac):
 dotnet run --project src/Mundialito.Api | grep "DomainEvent dispatched"
 ```
+
+---
+
+## Sprint 8 — Docker + Seed: Cómo levantar
+
+### Requisitos
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (o Docker Engine + Compose v2)
+
+### Levantar todo con un comando
+
+```bash
+docker-compose up --build
+```
+
+Esto:
+1. Construye la imagen de la API (multi-stage build).
+2. Levanta SQL Server 2022 Express.
+3. Espera a que SQL Server esté listo (healthcheck).
+4. La API aplica migraciones automáticamente al arrancar.
+5. La API ejecuta el seed 4/5/6/3 si la BD está vacía.
+
+### Verificar que el seed corrió
+
+En los logs del contenedor `mundialito_api` deben aparecer:
+
+```
+DB bootstrap attempt 1/10...
+Migrations applied successfully.
+Starting database seed (4 teams / 5 players / 6 matches / 3 results)...
+Seeded 4 teams.
+Seeded 20 players (5 per team).
+Seeded 6 matches.
+Seed applied successfully. Teams=4 Players=20 Matches=6 (Played=3 Scheduled=3) Results=3.
+DB bootstrap complete.
+```
+
+### Endpoints con datos inmediatos
+
+```bash
+# Tabla de posiciones
+curl http://localhost:8080/standings | jq .
+
+# Goleadores
+curl http://localhost:8080/scorers | jq .
+```
+
+**Tabla esperada:**
+
+| Equipo   | Pts | GF | GA | GD  |
+|----------|-----|----|----|-----|
+| Team A   |  7  |  3 |  2 | +1  |
+| Team B   |  3  |  3 |  5 | -2  |
+| Team C   |  1  |  1 |  1 |  0  |
+| Team D   |  0  |  0 |  3 | -3  |
+
+**Goleadores esperados:**
+
+| Jugador           | Goles |
+|-------------------|-------|
+| Team A Player 1   |   3   |
+| Team B Player 2   |   2   |
+| Team B Player 1   |   1   |
+| Team B Player 3   |   1   |
+| Team C Player 1   |   1   |
+
+### Detener y limpiar
+
+```bash
+docker-compose down          # detiene sin borrar datos
+docker-compose down -v       # detiene y borra el volumen (resetea BD)
+```

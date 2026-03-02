@@ -26,8 +26,8 @@ public class Result
     // ─── Constructores privados ───────────────────────────────────────────────
     protected Result(bool isSuccess, string? errorCode, string? errorMessage)
     {
-        IsSuccess = isSuccess;
-        ErrorCode = errorCode;
+        IsSuccess    = isSuccess;
+        ErrorCode    = errorCode;
         ErrorMessage = errorMessage;
     }
 
@@ -44,8 +44,8 @@ public class Result
 /// <summary>
 /// Resultado de una operación que devuelve un valor de tipo <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T">Tipo del valor retornado en caso de éxito.</typeparam>
-public sealed class Result<T> : Result
+/// <typeparam name="T">Tipo del valor retornado en caso de éxito. Must be non-null.</typeparam>
+public sealed class Result<T> : Result where T : notnull
 {
     private readonly T? _value;
 
@@ -53,7 +53,16 @@ public sealed class Result<T> : Result
     /// Valor del resultado. Solo válido cuando <see cref="Result.IsSuccess"/> es true.
     /// </summary>
     /// <exception cref="InvalidOperationException">Si se accede al valor en un resultado fallido.</exception>
-    public T? Value { get; }
+    public T? Value
+    {
+        get
+        {
+            if (!IsSuccess)
+                throw new InvalidOperationException(
+                    $"Cannot access Value on a failed Result. ErrorCode={ErrorCode}, ErrorMessage={ErrorMessage}");
+            return _value;
+        }
+    }
 
     private Result(bool isSuccess, T? value, string? errorCode, string? errorMessage)
         : base(isSuccess, errorCode, errorMessage)
@@ -61,8 +70,20 @@ public sealed class Result<T> : Result
         _value = value;
     }
 
-    /// <summary>Crea un resultado exitoso con el valor especificado.</summary>
-    public static Result<T> Ok(T value) => new(true, value, null, null);
+    /// <summary>
+    /// Crea un resultado exitoso con el valor especificado.
+    /// Lanza <see cref="InvalidOperationException"/> si <paramref name="value"/> es null,
+    /// ya que Result&lt;T&gt; where T : notnull no puede contener un Value null en éxito.
+    /// </summary>
+    public static Result<T> Ok(T value)
+    {
+        if (value is null)
+            throw new InvalidOperationException(
+                $"Result<{typeof(T).Name}>.Ok(value) cannot be called with a null value. " +
+                "This is a programming error in the factory method.");
+
+        return new(true, value, null, null);
+    }
 
     /// <summary>Crea un resultado de fallo con código y mensaje.</summary>
     public new static Result<T> Fail(string errorCode, string errorMessage) =>

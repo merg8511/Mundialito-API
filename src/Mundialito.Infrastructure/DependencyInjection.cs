@@ -8,6 +8,7 @@ using Mundialito.Infrastructure.Dapper;
 using Mundialito.Infrastructure.Idempotency;
 using Mundialito.Infrastructure.Persistence;
 using Mundialito.Infrastructure.Persistence.Repositories;
+using Mundialito.Infrastructure.Seed;
 
 namespace Mundialito.Infrastructure;
 
@@ -65,7 +66,9 @@ public static class DependencyInjection
         // para IdempotencyKeys (separado del UoW de dominio).
         services.AddScoped<IIdempotencyUnitOfWork, IdempotencyUnitOfWork>();
 
+        // ── Sprint 8: Seed ────────────────────────────────────────────────────
+        services.AddScoped<DatabaseSeeder>();
+
         return services;
     }
 }
-
