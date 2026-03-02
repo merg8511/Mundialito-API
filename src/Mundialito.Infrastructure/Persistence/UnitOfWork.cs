@@ -24,6 +24,7 @@ public sealed class UnitOfWork : IUnitOfWork
     /// <inheritdoc/>
     public async Task CommitAsync(CancellationToken ct = default)
     {
+        await using var tx = await _dbContext.Database.BeginTransactionAsync(ct);
         // a) Extraer domain events (copia)
         var trackedEntities = _dbContext.ChangeTracker.Entries<Entity>().Select(e => e.Entity).ToList();
 
@@ -35,7 +36,9 @@ public sealed class UnitOfWork : IUnitOfWork
         // c) Persistir — único SaveChangesAsync de toda la aplicación
         await _dbContext.SaveChangesAsync(ct);
 
-        // d) Limpiar eventos en las entidades (antes de SaveChanges para no duplicarlos)
+        await tx.CommitAsync(ct);
+
+        // d) Limpiar eventos en las entidades 
         foreach (var entity in trackedEntities)
             entity.ClearDomainEvents();
 
@@ -43,7 +46,7 @@ public sealed class UnitOfWork : IUnitOfWork
         foreach (var evt in domainEvents)
         {
             _logger.LogInformation(
-                "DomainEvent dispatched: {EventType} at {OccurredAt}",
+                "DomainEvent processed: {EventType} at {OccurredAt}",
                 evt.GetType().Name,
                 evt.OccurredAt);
         }

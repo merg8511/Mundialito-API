@@ -8,12 +8,12 @@ namespace Mundialito.Domain.Events;
 /// </summary>
 public sealed class TeamCreatedEvent : DomainEvent
 {
-    public Guid   TeamId      { get; }
-    public string TeamName    { get; }
+    public Guid TeamId { get; }
+    public string TeamName { get; }
 
     public TeamCreatedEvent(Guid teamId, string teamName)
     {
-        TeamId   = teamId;
+        TeamId = teamId;
         TeamName = teamName;
     }
 }

@@ -14,12 +14,6 @@ public interface IPlayerRepository
     /// <summary>Busca un jugador por su Id. Devuelve null si no existe.</summary>
     Task<Player?> GetByIdAsync(Guid id, CancellationToken ct = default);
 
-    /// <summary>
-    /// Lista los jugadores de un equipo dado.
-    /// Parámetro opcional; si es null devuelve todos (uso interno/seed).
-    /// </summary>
-    Task<IReadOnlyList<Player>> ListByTeamIdAsync(Guid? teamId, CancellationToken ct = default);
-
     /// <summary>Marca la entidad como modificada en el contexto (pendiente de commit).</summary>
     void Update(Player player);
 

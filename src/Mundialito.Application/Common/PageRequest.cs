@@ -9,24 +9,24 @@ namespace Mundialito.Application.Common;
 public sealed class PageRequest
 {
     // ─── Defaults ─────────────────────────────────────────────────────────────
-    public const int DefaultPageNumber   = 1;
-    public const int DefaultPageSize     = 10;
-    public const int MaxPageSize         = 100;
+    public const int DefaultPageNumber = 1;
+    public const int DefaultPageSize = 10;
+    public const int MaxPageSize = 100;
     public const string DefaultSortDirection = "asc";
 
     // ─── Propiedades ──────────────────────────────────────────────────────────
 
     /// <summary>Número de página (1-based). Mínimo 1.</summary>
-    public int    PageNumber     { get; init; } = DefaultPageNumber;
+    public int PageNumber { get; init; } = DefaultPageNumber;
 
     /// <summary>Registros por página. Rango [1, 100].</summary>
-    public int    PageSize       { get; init; } = DefaultPageSize;
+    public int PageSize { get; init; } = DefaultPageSize;
 
     /// <summary>Campo de ordenación. Validar contra la lista permitida del endpoint.</summary>
-    public string? SortBy        { get; init; }
+    public string? SortBy { get; init; }
 
     /// <summary>"asc" o "desc". Default "asc".</summary>
-    public string  SortDirection { get; init; } = DefaultSortDirection;
+    public string SortDirection { get; init; } = DefaultSortDirection;
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
 

@@ -23,17 +23,6 @@ public sealed class PlayerRepository : IPlayerRepository
         => await _db.Players.FindAsync([id], ct);
 
     /// <inheritdoc/>
-    public async Task<IReadOnlyList<Player>> ListByTeamIdAsync(Guid? teamId, CancellationToken ct = default)
-    {
-        var query = _db.Players.AsQueryable();
-
-        if (teamId.HasValue)
-            query = query.Where(p => p.TeamId == teamId.Value);
-
-        return await query.ToListAsync(ct);
-    }
-
-    /// <inheritdoc/>
     public void Update(Player player) => _db.Players.Update(player);
 
     /// <inheritdoc/>

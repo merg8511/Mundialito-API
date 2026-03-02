@@ -7,5 +7,5 @@ namespace Mundialito.Domain.Matches;
 public enum MatchStatus
 {
     Scheduled = 0,
-    Played    = 1
+    Played = 1
 }

@@ -14,19 +14,19 @@ namespace Mundialito.Domain.Results;
 public sealed class MatchGoal : Entity
 {
     /// <summary>Partido al que corresponde el gol.</summary>
-    public Guid     MatchId    { get; private set; }
+    public Guid MatchId { get; private set; }
 
     /// <summary>Jugador que anotó.</summary>
-    public Guid     PlayerId   { get; private set; }
+    public Guid PlayerId { get; private set; }
 
     /// <summary>Equipo del jugador.</summary>
-    public Guid     TeamId     { get; private set; }
+    public Guid TeamId { get; private set; }
 
     /// <summary>Cantidad de goles anotados por este jugador en este partido.</summary>
-    public int      Goals      { get; private set; }
+    public int Goals { get; private set; }
 
     /// <summary>Fecha/hora UTC de registro.</summary>
-    public DateTime CreatedAt  { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
     // Constructor privado para EF Core y la factory.
     private MatchGoal() { }
@@ -53,10 +53,10 @@ public sealed class MatchGoal : Entity
 
         var goal = new MatchGoal
         {
-            MatchId   = matchId,
-            PlayerId  = playerId,
-            TeamId    = teamId,
-            Goals     = goals,
+            MatchId = matchId,
+            PlayerId = playerId,
+            TeamId = teamId,
+            Goals = goals,
             CreatedAt = DateTime.UtcNow
         };
         goal.SetId(Guid.NewGuid());

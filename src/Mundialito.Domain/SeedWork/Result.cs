@@ -26,8 +26,8 @@ public class Result
     // ─── Constructores privados ───────────────────────────────────────────────
     protected Result(bool isSuccess, string? errorCode, string? errorMessage)
     {
-        IsSuccess    = isSuccess;
-        ErrorCode    = errorCode;
+        IsSuccess = isSuccess;
+        ErrorCode = errorCode;
         ErrorMessage = errorMessage;
     }
 
@@ -53,10 +53,7 @@ public sealed class Result<T> : Result
     /// Valor del resultado. Solo válido cuando <see cref="Result.IsSuccess"/> es true.
     /// </summary>
     /// <exception cref="InvalidOperationException">Si se accede al valor en un resultado fallido.</exception>
-    public T Value => IsSuccess
-        ? _value!
-        : throw new InvalidOperationException(
-            "Cannot access Value on a failed Result. Check IsSuccess first.");
+    public T? Value { get; }
 
     private Result(bool isSuccess, T? value, string? errorCode, string? errorMessage)
         : base(isSuccess, errorCode, errorMessage)

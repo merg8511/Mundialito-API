@@ -7,19 +7,19 @@ namespace Mundialito.Application.Common;
 public sealed class PaginationResponse<T>
 {
     /// <summary>Página de datos devuelta.</summary>
-    public IReadOnlyList<T> Data        { get; init; } = [];
+    public IReadOnlyList<T> Data { get; init; } = [];
 
     /// <summary>Número de página solicitado (1-based).</summary>
-    public int              PageNumber  { get; init; }
+    public int PageNumber { get; init; }
 
     /// <summary>Tamaño de página solicitado.</summary>
-    public int              PageSize    { get; init; }
+    public int PageSize { get; init; }
 
     /// <summary>Total de registros que cumplen el filtro (sin paginar).</summary>
-    public int              TotalRecords { get; init; }
+    public int TotalRecords { get; init; }
 
     /// <summary>Total de páginas calculado: ⌈totalRecords / pageSize⌉.</summary>
-    public int              TotalPages  { get; init; }
+    public int TotalPages { get; init; }
 
     // ─── Factory ──────────────────────────────────────────────────────────────
 
@@ -28,9 +28,9 @@ public sealed class PaginationResponse<T>
     /// </summary>
     public static PaginationResponse<T> Create(
         IReadOnlyList<T> data,
-        int              pageNumber,
-        int              pageSize,
-        int              totalRecords)
+        int pageNumber,
+        int pageSize,
+        int totalRecords)
     {
         var totalPages = pageSize > 0
             ? (int)Math.Ceiling((double)totalRecords / pageSize)
@@ -38,11 +38,11 @@ public sealed class PaginationResponse<T>
 
         return new PaginationResponse<T>
         {
-            Data         = data,
-            PageNumber   = pageNumber,
-            PageSize     = pageSize,
+            Data = data,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
             TotalRecords = totalRecords,
-            TotalPages   = totalPages
+            TotalPages = totalPages
         };
     }
 }

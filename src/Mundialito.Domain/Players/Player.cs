@@ -14,13 +14,13 @@ namespace Mundialito.Domain.Players;
 public sealed class Player : Entity
 {
     /// <summary>Identificador del equipo al que pertenece.</summary>
-    public Guid    TeamId    { get; private set; }
+    public Guid TeamId { get; private set; }
 
     /// <summary>Nombre completo del jugador.</summary>
-    public string  FullName  { get; private set; } = default!;
+    public string FullName { get; private set; } = default!;
 
     /// <summary>Número de dorsal (opcional).</summary>
-    public int?    Number    { get; private set; }
+    public int? Number { get; private set; }
 
     /// <summary>Fecha/hora UTC de creación.</summary>
     public DateTime CreatedAt { get; private set; }
@@ -55,9 +55,9 @@ public sealed class Player : Entity
 
         var player = new Player
         {
-            TeamId    = teamId,
-            FullName  = fullName.Trim(),
-            Number    = number,
+            TeamId = teamId,
+            FullName = fullName.Trim(),
+            Number = number,
             CreatedAt = DateTime.UtcNow
         };
         player.SetId(Guid.NewGuid());
@@ -84,7 +84,7 @@ public sealed class Player : Entity
                 "Player number must be greater than zero.");
 
         FullName = fullName.Trim();
-        Number   = number;
+        Number = number;
         return Result.Ok();
     }
 }

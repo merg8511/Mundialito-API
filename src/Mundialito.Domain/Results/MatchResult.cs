@@ -16,16 +16,16 @@ namespace Mundialito.Domain.Results;
 public sealed class MatchResult : Entity
 {
     /// <summary>Partido al que pertenece el resultado.</summary>
-    public Guid     MatchId     { get; private set; }
+    public Guid MatchId { get; private set; }
 
     /// <summary>Goles del equipo local.</summary>
-    public int      HomeGoals   { get; private set; }
+    public int HomeGoals { get; private set; }
 
     /// <summary>Goles del equipo visitante.</summary>
-    public int      AwayGoals   { get; private set; }
+    public int AwayGoals { get; private set; }
 
     /// <summary>Fecha/hora UTC en que se registró el resultado.</summary>
-    public DateTime RecordedAt  { get; private set; }
+    public DateTime RecordedAt { get; private set; }
 
     // Constructor privado para EF Core y la factory.
     private MatchResult() { }
@@ -50,9 +50,9 @@ public sealed class MatchResult : Entity
 
         var result = new MatchResult
         {
-            MatchId    = matchId,
-            HomeGoals  = homeGoals,
-            AwayGoals  = awayGoals,
+            MatchId = matchId,
+            HomeGoals = homeGoals,
+            AwayGoals = awayGoals,
             RecordedAt = DateTime.UtcNow
         };
         result.SetId(Guid.NewGuid());

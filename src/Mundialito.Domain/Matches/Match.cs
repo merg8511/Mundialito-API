@@ -17,19 +17,19 @@ namespace Mundialito.Domain.Matches;
 public sealed class Match : Entity
 {
     /// <summary>Equipo local.</summary>
-    public Guid        HomeTeamId   { get; private set; }
+    public Guid HomeTeamId { get; private set; }
 
     /// <summary>Equipo visitante.</summary>
-    public Guid        AwayTeamId   { get; private set; }
+    public Guid AwayTeamId { get; private set; }
 
     /// <summary>Fecha/hora UTC programada para el partido.</summary>
-    public DateTime    ScheduledAt  { get; private set; }
+    public DateTime ScheduledAt { get; private set; }
 
     /// <summary>Estado actual del partido.</summary>
-    public MatchStatus Status       { get; private set; }
+    public MatchStatus Status { get; private set; }
 
     /// <summary>Fecha/hora UTC de registro del partido en el sistema.</summary>
-    public DateTime    CreatedAt    { get; private set; }
+    public DateTime CreatedAt { get; private set; }
 
     // Constructor privado para EF Core y la factory.
     private Match() { }
@@ -57,11 +57,11 @@ public sealed class Match : Entity
 
         var match = new Match
         {
-            HomeTeamId  = homeTeamId,
-            AwayTeamId  = awayTeamId,
+            HomeTeamId = homeTeamId,
+            AwayTeamId = awayTeamId,
             ScheduledAt = scheduledAt.ToUniversalTime(),
-            Status      = MatchStatus.Scheduled,
-            CreatedAt   = DateTime.UtcNow
+            Status = MatchStatus.Scheduled,
+            CreatedAt = DateTime.UtcNow
         };
         match.SetId(Guid.NewGuid());
 

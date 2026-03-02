@@ -9,13 +9,13 @@ namespace Mundialito.Domain.Events;
 /// </summary>
 public sealed class MatchResultRecordedEvent : DomainEvent
 {
-    public Guid MatchId    { get; }
-    public int  HomeGoals  { get; }
-    public int  AwayGoals  { get; }
+    public Guid MatchId { get; }
+    public int HomeGoals { get; }
+    public int AwayGoals { get; }
 
     public MatchResultRecordedEvent(Guid matchId, int homeGoals, int awayGoals)
     {
-        MatchId   = matchId;
+        MatchId = matchId;
         HomeGoals = homeGoals;
         AwayGoals = awayGoals;
     }
