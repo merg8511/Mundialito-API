@@ -1,7 +1,7 @@
 namespace Mundialito.Application.DTOs.Players;
 
 /// <summary>
-/// Respuesta de jugador según BLUEPRINT:
+/// Respuesta de jugador 
 /// { "id", "teamId", "fullName", "number", "createdAt" }
 /// </summary>
 public sealed class PlayerResponse

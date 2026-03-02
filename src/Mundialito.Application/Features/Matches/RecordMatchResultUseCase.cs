@@ -9,7 +9,7 @@ namespace Mundialito.Application.Features.Matches;
 /// <summary>
 /// Caso de uso: Registrar el resultado de un partido (POST /matches/{id}/results).
 ///
-/// Validaciones obligatorias según BLUEPRINT:
+/// Validaciones obligatorias:
 ///   1. match existe                              → MATCH_NOT_FOUND (404)
 ///   2. match no está en estado Played            → MATCH_ALREADY_PLAYED (409)
 ///   3. cada player en goalsByPlayer existe       → PLAYER_NOT_FOUND (404)

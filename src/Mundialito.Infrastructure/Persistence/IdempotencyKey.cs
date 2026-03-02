@@ -2,7 +2,7 @@ namespace Mundialito.Infrastructure.Persistence;
 
 /// <summary>
 /// Registro de idempotencia para POST endpoints.
-/// Estructura mínima alineada al BLUEPRINT (lógica en Sprint 5).
+/// Estructura mínima alineada .
 /// </summary>
 public sealed class IdempotencyKey
 {

@@ -35,7 +35,7 @@ public sealed class CreateTeamUseCase
                 DomainErrors.ValidationError,
                 "Team name is required.");
 
-        // 2. Unicidad del nombre (Application responsibility según BLUEPRINT).
+        // 2. Unicidad del nombre (Application responsibility).
         var existing = await _teamRepository.GetByNameAsync(request.Name.Trim(), ct);
         if (existing is not null)
             return Result<TeamResponse>.Fail(

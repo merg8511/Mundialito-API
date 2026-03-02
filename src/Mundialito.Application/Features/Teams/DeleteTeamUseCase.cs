@@ -6,7 +6,7 @@ namespace Mundialito.Application.Features.Teams;
 
 /// <summary>
 /// Caso de uso: Eliminar un equipo.
-/// Según BLUEPRINT DELETE es idempotente puro (siempre 204).
+/// DELETE es idempotente puro (siempre 204).
 /// Por eso NO se valida existencia del equipo; si el recurso no existe simplemente no hay nada que borrar.
 /// Si Infrastructure detecta dependencias FK, retornará TEAM_HAS_DEPENDENCIES (409).
 /// </summary>

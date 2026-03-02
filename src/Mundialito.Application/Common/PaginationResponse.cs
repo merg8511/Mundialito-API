@@ -1,7 +1,7 @@
 namespace Mundialito.Application.Common;
 
 /// <summary>
-/// Envelope de respuesta paginada según el BLUEPRINT.
+/// Envelope de respuesta paginada 
 /// Estructura fija: { data, pageNumber, pageSize, totalRecords, totalPages }
 /// </summary>
 public sealed class PaginationResponse<T>

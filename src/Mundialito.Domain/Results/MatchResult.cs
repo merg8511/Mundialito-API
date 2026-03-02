@@ -4,7 +4,7 @@ using Mundialito.Domain.SeedWork;
 namespace Mundialito.Domain.Results;
 
 /// <summary>
-/// Resultado oficial de un partido (tabla MatchResults del blueprint).
+/// Resultado oficial de un partido (tabla MatchResults).
 /// Entidad de solo creación: los resultados no se modifican una vez registrados.
 /// </summary>
 /// <remarks>

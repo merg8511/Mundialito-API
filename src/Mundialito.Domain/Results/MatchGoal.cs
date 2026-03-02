@@ -3,7 +3,7 @@ using Mundialito.Domain.SeedWork;
 namespace Mundialito.Domain.Results;
 
 /// <summary>
-/// Registro de goles de un jugador en un partido (tabla MatchGoals del blueprint).
+/// Registro de goles de un jugador en un partido (tabla MatchGoals).
 /// </summary>
 /// <remarks>
 /// Invariantes:

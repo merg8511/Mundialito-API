@@ -1,7 +1,7 @@
 namespace Mundialito.Domain.Matches;
 
 /// <summary>
-/// Estados posibles de un partido según el BLUEPRINT.
+/// Estados posibles de un partido
 /// Solo se serializa el nombre ("Scheduled" / "Played").
 /// </summary>
 public enum MatchStatus

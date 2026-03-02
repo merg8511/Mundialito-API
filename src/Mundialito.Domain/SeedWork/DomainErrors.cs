@@ -5,7 +5,7 @@ namespace Mundialito.Domain.SeedWork;
 /// Es el ÚNICO lugar donde se definen; ningún otra clase debe usar strings literales
 /// distintos de estas constantes.
 ///
-/// Fuente de verdad: BLUEPRINT.md §CATÁLOGO FINAL DE ERRORCODES.
+/// CATÁLOGO FINAL DE ERRORCODES.
 /// </summary>
 public static class DomainErrors
 {

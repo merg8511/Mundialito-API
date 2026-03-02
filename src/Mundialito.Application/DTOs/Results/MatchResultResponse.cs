@@ -1,7 +1,7 @@
 namespace Mundialito.Application.DTOs.Results;
 
 /// <summary>
-/// Respuesta de POST /matches/{id}/results según BLUEPRINT:
+/// Respuesta de POST /matches/{id}/results 
 /// { "matchId", "homeGoals", "awayGoals", "recordedAt", "goalsByPlayer": [...] }
 /// </summary>
 public sealed class MatchResultResponse
