@@ -17,92 +17,79 @@ export default async function TeamsPage({ searchParams }: PageProps) {
 
   let result;
   let fetchError: unknown = null;
-
   try {
-    result = await listTeams(teamsAdapter, {
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortDirection,
-      search,
-    });
+    result = await listTeams(teamsAdapter, { pageNumber, pageSize, sortBy, sortDirection, search });
   } catch (err) {
     fetchError = err;
   }
 
-  if (fetchError) {
-    return <ErrorMessage error={fetchError} />;
-  }
-
+  if (fetchError) return <ErrorMessage error={fetchError} />;
   if (!result) return null;
+
+  const paginationBase = `/teams?pageSize=${pageSize}&search=${search ?? ""}&sortBy=${sortBy ?? ""}&sortDirection=${sortDirection}`;
 
   return (
     <div>
-      <h2>Teams</h2>
+      <h2 className="page-title">Teams</h2>
 
-      {/* Filter form */}
-      <form method="GET" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem" }}>
-        <input name="search" defaultValue={search ?? ""} placeholder="Search…" />
-        <select name="sortBy" defaultValue={sortBy ?? ""}>
+      <form method="GET" className="filter-bar">
+        <input type="hidden" name="pageNumber" value="1" />
+        <input type="hidden" name="pageSize" value={pageSize} />
+        <input name="search" defaultValue={search ?? ""} placeholder="Search team…" className="filter-input" />
+        <select name="sortBy" defaultValue={sortBy ?? ""} className="filter-select">
           <option value="">Sort by…</option>
           <option value="name">Name</option>
           <option value="createdAt">Created</option>
         </select>
-        <select name="sortDirection" defaultValue={sortDirection}>
+        <select name="sortDirection" defaultValue={sortDirection} className="filter-select">
           <option value="asc">ASC</option>
           <option value="desc">DESC</option>
         </select>
-        <button type="submit">Apply</button>
+        <button type="submit" className="btn-primary">Apply</button>
       </form>
 
       {result.data.length === 0 ? (
-        <p>No teams found.</p>
+        <p className="empty-state">No teams found.</p>
       ) : (
-        <table style={{ borderCollapse: "collapse", width: "100%" }}>
-          <thead>
-            <tr>
-              <th style={th}>Name</th>
-              <th style={th}>Created</th>
-              <th style={th}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.data.map((team) => (
-              <tr key={team.id}>
-                <td style={td}>{team.name}</td>
-                <td style={td}>{new Date(team.createdAt).toLocaleDateString()}</td>
-                <td style={td}>
-                  <Link href={`/teams/${team.id}`}>Detail</Link>
-                </td>
+        <div className="card">
+          <table>
+            <thead>
+              <tr>
+                <th>Team Name</th>
+                <th>Created</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {result.data.map((team) => (
+                <tr key={team.id}>
+                  <td className="team-name-cell">{team.name}</td>
+                  <td>{new Date(team.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    <Link href={`/teams/${team.id}`} className="action-link">
+                      View Detail →
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
-      {/* Pagination */}
-      <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
-        <span>
-          Page {result.pageNumber} / {result.totalPages} ({result.totalRecords} total)
+      <div className="pagination">
+        <span className="pagination-info">
+          Page {result.pageNumber} / {result.totalPages} · {result.totalRecords} teams
         </span>
-        {result.pageNumber > 1 && (
-          <Link
-            href={`/teams?pageNumber=${result.pageNumber - 1}&pageSize=${pageSize}&search=${search ?? ""}&sortBy=${sortBy ?? ""}&sortDirection=${sortDirection}`}
-          >
-            ← Prev
-          </Link>
-        )}
-        {result.pageNumber < result.totalPages && (
-          <Link
-            href={`/teams?pageNumber=${result.pageNumber + 1}&pageSize=${pageSize}&search=${search ?? ""}&sortBy=${sortBy ?? ""}&sortDirection=${sortDirection}`}
-          >
-            Next →
-          </Link>
-        )}
+        <div className="pagination-controls">
+          {result.pageNumber > 1 && (
+            <Link href={`${paginationBase}&pageNumber=${result.pageNumber - 1}`} className="page-btn">← Prev</Link>
+          )}
+          {result.pageNumber < result.totalPages && (
+            <Link href={`${paginationBase}&pageNumber=${result.pageNumber + 1}`} className="page-btn">Next →</Link>
+          )}
+        </div>
       </div>
     </div>
   );
 }
-
-const th: React.CSSProperties = { textAlign: "left", borderBottom: "1px solid #ccc", padding: "4px 8px" };
-const td: React.CSSProperties = { padding: "4px 8px", borderBottom: "1px solid #eee" };

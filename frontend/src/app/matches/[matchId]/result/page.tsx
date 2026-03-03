@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { getMatch } from "@/application/use-cases";
-import { matchesAdapter } from "@/infrastructure/adapters";
+import { getMatch, listPlayersByTeam } from "@/application/use-cases";
+import { matchesAdapter, playersAdapter } from "@/infrastructure/adapters";
 import { ErrorMessage } from "@/ui/components/ErrorMessage";
 import { RecordResultForm } from "./RecordResultForm";
 
@@ -23,7 +23,7 @@ export default async function RecordResultPage({ params }: PageProps) {
   if (fetchError) {
     return (
       <div>
-        <Link href="/matches">← Back to Matches</Link>
+        <Link href="/matches" className="back-link">← Back to Matches</Link>
         <ErrorMessage error={fetchError} />
       </div>
     );
@@ -34,7 +34,7 @@ export default async function RecordResultPage({ params }: PageProps) {
   if (match.status !== "Scheduled") {
     return (
       <div>
-        <Link href="/matches">← Back to Matches</Link>
+        <Link href="/matches" className="back-link">← Back to Matches</Link>
         <p>
           Result already recorded for this match ({match.homeTeamName}{" "}
           {match.homeGoals} – {match.awayGoals} {match.awayTeamName}).
@@ -43,16 +43,30 @@ export default async function RecordResultPage({ params }: PageProps) {
     );
   }
 
+  // Fetch rosters for both teams — backend max pageSize is 100
+  const [homePlayersResult, awayPlayersResult] = await Promise.all([
+    listPlayersByTeam(playersAdapter, match.homeTeamId, { pageSize: 10 }),
+    listPlayersByTeam(playersAdapter, match.awayTeamId, { pageSize: 10 }),
+  ]);
+
   return (
     <div>
-      <Link href="/matches">← Back to Matches</Link>
-      <h2>Record Result</h2>
-      <p>
-        <strong>{match.homeTeamName}</strong> vs <strong>{match.awayTeamName}</strong>
+      <Link href="/matches" className="back-link">← Back to Matches</Link>
+      <h2 className="page-title">Record Result</h2>
+      <p style={{ marginBottom: "1.5rem", color: "var(--gray-500)", fontSize: "0.9rem" }}>
+        <strong style={{ color: "var(--text)" }}>{match.homeTeamName}</strong>
+        {" vs "}
+        <strong style={{ color: "var(--text)" }}>{match.awayTeamName}</strong>
         {" — "}
-        {new Date(match.scheduledAt).toLocaleDateString()}
+        {new Date(match.scheduledAt).toLocaleDateString(undefined, { timeZone: "UTC" })}
       </p>
-      <RecordResultForm matchId={matchId} />
+      <RecordResultForm
+        matchId={matchId}
+        homeTeamName={match.homeTeamName}
+        awayTeamName={match.awayTeamName}
+        homePlayers={homePlayersResult.data}
+        awayPlayers={awayPlayersResult.data}
+      />
     </div>
   );
 }

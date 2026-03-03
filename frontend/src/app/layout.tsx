@@ -15,22 +15,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <nav
-          style={{
-            display: "flex",
-            gap: "1.5rem",
-            padding: "0.75rem 1.5rem",
-            borderBottom: "1px solid #ddd",
-            fontFamily: "monospace",
-          }}
-        >
-          <Link href="/">Home</Link>
-          <Link href="/teams">Teams</Link>
-          <Link href="/matches">Matches</Link>
-          <Link href="/standings">Standings</Link>
-          <Link href="/scorers">Scorers</Link>
-        </nav>
-        <main style={{ padding: "1.5rem", fontFamily: "monospace" }}>
+        <header className="site-header">
+          <div className="header-inner">
+            <Link href="/" className="brand">
+              <span className="brand-icon">⚽</span>
+              <span className="brand-name">Mundialito</span>
+            </Link>
+            <nav className="nav">
+              <Link href="/teams" className="nav-link">Teams</Link>
+              <Link href="/matches" className="nav-link">Matches</Link>
+              <Link href="/standings" className="nav-link">Standings</Link>
+              <Link href="/scorers" className="nav-link">Scorers</Link>
+            </nav>
+          </div>
+        </header>
+        <main className="main-content">
           {children}
         </main>
       </body>

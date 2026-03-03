@@ -17,7 +17,6 @@ export default async function TeamDetailPage({ params, searchParams }: PageProps
   let team;
   let players;
   let fetchError: unknown = null;
-
   try {
     [team, players] = await Promise.all([
       getTeam(teamsAdapter, teamId),
@@ -27,58 +26,65 @@ export default async function TeamDetailPage({ params, searchParams }: PageProps
     fetchError = err;
   }
 
-  if (fetchError) {
-    return <ErrorMessage error={fetchError} />;
-  }
-
+  if (fetchError) return <ErrorMessage error={fetchError} />;
   if (!team) return null;
+
+  const paginationBase = `/teams/${teamId}?pageSize=${pageSize}`;
 
   return (
     <div>
-      <Link href="/teams">← Back to Teams</Link>
-      <h2>{team.name}</h2>
-      <p>Created: {new Date(team.createdAt).toLocaleDateString()}</p>
+      <Link href="/teams" className="back-link">← Back to Teams</Link>
 
-      <h3>Players</h3>
+      <div className="team-header">
+        <span className="team-header-icon">🛡️</span>
+        <div>
+          <h2 className="page-title" style={{ marginBottom: "0.25rem" }}>{team.name}</h2>
+          <p className="team-meta">Founded · {new Date(team.createdAt).toLocaleDateString()}</p>
+        </div>
+      </div>
+
+      <h3 className="section-title">Squad</h3>
+
       {!players || players.data.length === 0 ? (
-        <p>No players registered.</p>
+        <p className="empty-state">No players registered.</p>
       ) : (
         <>
-          <table style={{ borderCollapse: "collapse", width: "100%" }}>
-            <thead>
-              <tr>
-                <th style={th}>#</th>
-                <th style={th}>Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {players.data.map((p) => (
-                <tr key={p.id}>
-                  <td style={td}>{p.number ?? "—"}</td>
-                  <td style={td}>{p.fullName}</td>
+          <div className="card">
+            <table>
+              <thead>
+                <tr>
+                  <th style={{ width: "60px" }}>#</th>
+                  <th>Player</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {players.data.map((p) => (
+                  <tr key={p.id}>
+                    <td>
+                      <span className="player-number">{p.number ?? "—"}</span>
+                    </td>
+                    <td className="team-name-cell">{p.fullName}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-          <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
-            <span>Page {players.pageNumber} / {players.totalPages}</span>
-            {players.pageNumber > 1 && (
-              <Link href={`/teams/${teamId}?pageNumber=${players.pageNumber - 1}&pageSize=${pageSize}`}>
-                ← Prev
-              </Link>
-            )}
-            {players.pageNumber < players.totalPages && (
-              <Link href={`/teams/${teamId}?pageNumber=${players.pageNumber + 1}&pageSize=${pageSize}`}>
-                Next →
-              </Link>
-            )}
+          <div className="pagination">
+            <span className="pagination-info">
+              Page {players.pageNumber} / {players.totalPages} · {players.totalRecords} players
+            </span>
+            <div className="pagination-controls">
+              {players.pageNumber > 1 && (
+                <Link href={`${paginationBase}&pageNumber=${players.pageNumber - 1}`} className="page-btn">← Prev</Link>
+              )}
+              {players.pageNumber < players.totalPages && (
+                <Link href={`${paginationBase}&pageNumber=${players.pageNumber + 1}`} className="page-btn">Next →</Link>
+              )}
+            </div>
           </div>
         </>
       )}
     </div>
   );
 }
-
-const th: React.CSSProperties = { textAlign: "left", borderBottom: "1px solid #ccc", padding: "4px 8px" };
-const td: React.CSSProperties = { padding: "4px 8px", borderBottom: "1px solid #eee" };
