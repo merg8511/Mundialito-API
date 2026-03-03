@@ -13,9 +13,10 @@ export interface ActionResult {
 export async function recordResultAction(
   matchId: string,
   payload: RecordResultPayload,
+  idempotencyKey: string,
 ): Promise<ActionResult> {
   try {
-    await recordMatchResult(matchesAdapter, matchId, payload);
+    await recordMatchResult(matchesAdapter, matchId, payload, idempotencyKey);
     return { ok: true };
   } catch (err) {
     if (err instanceof Error) {

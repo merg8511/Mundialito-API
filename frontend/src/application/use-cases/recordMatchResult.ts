@@ -5,6 +5,7 @@ export async function recordMatchResult(
   port: IMatchesPort,
   matchId: string,
   payload: RecordResultPayload,
+  idempotencyKey?: string,
 ): Promise<Match> {
-  return port.recordResult(matchId, payload);
+  return port.recordResult(matchId, payload, idempotencyKey);
 }

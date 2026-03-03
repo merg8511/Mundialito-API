@@ -17,5 +17,5 @@ export interface RecordResultPayload {
 export interface IMatchesPort {
   list(params: MatchesListParams): Promise<PagedResponse<Match>>;
   getById(id: string): Promise<Match>;
-  recordResult(matchId: string, payload: RecordResultPayload): Promise<Match>;
+  recordResult(matchId: string, payload: RecordResultPayload, idempotencyKey?: string): Promise<Match>;
 }

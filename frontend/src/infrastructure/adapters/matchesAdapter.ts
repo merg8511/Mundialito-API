@@ -23,7 +23,8 @@ export const matchesAdapter: IMatchesPort = {
     return httpClient.get<Match>(`matches/${id}`);
   },
 
-  async recordResult(matchId: string, payload: RecordResultPayload): Promise<Match> {
-    return httpClient.post<Match>(`matches/${matchId}/results`, payload);
+  async recordResult(matchId: string, payload: RecordResultPayload, idempotencyKey?: string): Promise<Match> {
+    const headers = idempotencyKey ? { "Idempotency-Key": idempotencyKey } : undefined;
+    return httpClient.post<Match>(`matches/${matchId}/results`, payload, headers);
   },
 };
