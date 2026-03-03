@@ -50,7 +50,7 @@ public sealed class ObservabilityMiddleware
 
         // ── Log al finalizar el request ───────────────────────────────────────
         _logger.LogInformation(
-            "HTTP {Method} {Path} → {StatusCode} in {ElapsedMs}ms | traceId={TraceId} correlationId={CorrelationId}",
+            "HTTP {Method} {Path} | {StatusCode} in {ElapsedMs}ms | traceId={TraceId} correlationId={CorrelationId}",
             context.Request.Method,
             context.Request.Path,
             context.Response.StatusCode,

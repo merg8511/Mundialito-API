@@ -24,17 +24,17 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title       = "Mundialito de Fútbol Corporativo — API",
-        Version     = "v1",
+        Title = "Mundialito de Fútbol Corporativo — API",
+        Version = "v1",
         Description = "Backend REST para la gestión del torneo corporativo de fútbol."
     });
 
     // Soporte para el header Idempotency-Key en Swagger UI
     c.AddSecurityDefinition("IdempotencyKey", new OpenApiSecurityScheme
     {
-        Name        = "Idempotency-Key",
-        In          = ParameterLocation.Header,
-        Type        = SecuritySchemeType.ApiKey,
+        Name = "Idempotency-Key",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
         Description = "Clave de idempotencia requerida en todos los POST."
     });
 });
@@ -67,7 +67,6 @@ builder.Services.AddScoped<RecordMatchResultUseCase>();
 // Build the app
 // ─────────────────────────────────────────────────────────────────────────────
 var app = builder.Build();
-
 // ─────────────────────────────────────────────────────────────────────────────
 // DB Bootstrap: migrate + seed (with retry for Docker / cold SQL Server starts)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -94,7 +93,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
@@ -118,7 +117,7 @@ static async Task BootstrapDatabaseAsync(WebApplication app)
 {
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
-    const int maxRetries   = 10;
+    const int maxRetries = 10;
     const int delaySeconds = 6;
 
     for (var attempt = 1; attempt <= maxRetries; attempt++)
@@ -171,7 +170,7 @@ static async Task BootstrapDatabaseAsync(WebApplication app)
         maxRetries);
 
     await using var lastScope = app.Services.CreateAsyncScope();
-    var lastDb     = lastScope.ServiceProvider.GetRequiredService<MundialitoDbContext>();
+    var lastDb = lastScope.ServiceProvider.GetRequiredService<MundialitoDbContext>();
     var lastSeeder = lastScope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
     await lastDb.Database.MigrateAsync();
     await lastSeeder.SeedAsync();
